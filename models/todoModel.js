@@ -111,7 +111,6 @@ async function validateTodoBelongsToUser(todoId, userId) {
 
     return rows.length > 0;
   } catch (error) {
-    console.error('Error validating todo ownership:', error);
     throw new Error('Error validating todo ownership');
   }
 }
