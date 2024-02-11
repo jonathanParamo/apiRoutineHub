@@ -1,3 +1,4 @@
+import { errorResponse } from "../Red/responses.js";
 import pool from "../dbConnection.js";
 
 function validateId(tableName) {
@@ -10,12 +11,12 @@ function validateId(tableName) {
       `, [id]);
 
       if (rows.length === 0) {
-        return res.status(400).json({ error: 'Invalid ID' });
+        errorResponse(req, res, 'Invalid ID', 400);
       }
 
       next();
     } catch (error) {
-      return res.status(500).json({ error: 'Internet server error' });
+      errorResponse(req, res, 'Internet server error');
     }
   };
 }

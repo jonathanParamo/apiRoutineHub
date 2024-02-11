@@ -1,3 +1,4 @@
+import { errorResponse } from "../Red/responses.js";
 import pool from "../dbConnection.js"
 
 export async function getTodosByIDModel(id) {
@@ -10,7 +11,7 @@ export async function getTodosByIDModel(id) {
     `, [id, id]);
     return rows;
   } catch (error) {
-    throw new Error('Error fetching todos from the database');
+    errorResponse(req, res, 'Error fetching todos from the database');
   }
 }
 
@@ -19,18 +20,18 @@ export async function userExistsModel(user_id) {
     const [rows] = await pool.query('SELECT id FROM users WHERE id = ?', [user_id]);
     return rows.length > 0;
   } catch (error) {
-    throw new Error('Error checking user existence in the database');
+    errorResponse(req, res, 'Error checking user existence in the database');
   }
 }
 
 export async function createTodoModel(user_id, title) {
   if (!user_id || !title) {
-    throw new Error("user_id and title are required");
+    errorResponse(req, res, "user_id and title are required");
   }
 
   const userExists = await userExistsModel(user_id);
   if (!userExists) {
-    throw new Error("User with provided user_id does not exist");
+    errorResponse(req, res, "User with provided user_id does not exist");
   }
 
   const [result] = await pool.query(
@@ -58,7 +59,7 @@ export async function getTodoModel(id) {
 
 export async function shareTodoModel(todo_id, user_id, shared_with_id) {
   if (!todo_id || !user_id || !shared_with_id) {
-    throw new Error("Invalid todo_id, user_id, or shared_with_id");
+    errorResponse(req, res, "Invalid todo_id, user_id, or shared_with_id");
   }
 
   const [result] = await pool.query(
@@ -74,7 +75,7 @@ export async function shareTodoModel(todo_id, user_id, shared_with_id) {
 export async function deleteTodoModel(id) {
 
   if (!id) {
-    throw new Error("Unauthorized: Todo does not belong to the user");
+    errorResponse(req, res, "Unauthorized: Todo does not belong to the user");
   }
 
   const [result] = await pool.query(
@@ -90,7 +91,7 @@ export async function toggleCompletedModel(id, value) {
   const todoBelongsToUser = await validateTodoBelongsToUser(id, userId);
 
   if (!todoBelongsToUser) {
-    throw new Error("Unauthorized: Todo does not belong to the user");
+    errorResponse(req, res, "Unauthorized: Todo does not belong to the user");
   }
 
   const newValue = value === true ? "TRUE" : "FALSE";
@@ -111,6 +112,6 @@ async function validateTodoBelongsToUser(todoId, userId) {
 
     return rows.length > 0;
   } catch (error) {
-    throw new Error('Error validating todo ownership');
+    errorResponse(req, res, 'Error validating todo ownership');
   }
 }
