@@ -3,7 +3,7 @@ import cors from "cors";
 import routes from "./routes/routes.js";
 
 const corsOptions = {
-  origin: "http://localhost:8080",
+  origin: process.env.PORT || "http://localhost:8080",
   methods: ["POST", "GET", "PUT", "DELETE"],
   credentials: true,
 };
